@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Proof of Concept</title>
+    <style>
+      pre {
+        background: #555;
+        color: #5f5;
+        padding: 30px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Proof of Concept</h1>
+    <p id="gamepad-status"></p>
+    <pre id="gamepad-display"></pre>
+  </body>
+  <script>
+    window.addEventListener("gamepadconnected", (event) => {
+      console.log("Gamepad connected: ");
+      console.log(event.gamepad);
+      document.getElementById("gamepad-status").innerHTML =
+        "Your gamepad is connected";
+    });
+    window.addEventListener("gamepaddisconnected", (event) => {
+      console.log("Gamepad disconnected: ");
+      console.log(event.gamepad);
+      document.getElementById("gamepad-status").innerHTML =
+        "The gamepad is disconnected";
+    });
+
+    // var gamepadStatus = document.getElementById("gamepad-status")
+
+    // if (gamepad.connected) {
+    //   document.getElementById("gamepad-status").innerHTML =
+    //     "The gamepad is connected";
+    // }
+    // if (!gamepad.connected) {
+    //   document.getElementById("gamepad-status").innerHTML =
+    //     "The gamepad is disconnected";
+    // }
+    //this tells me in the console what the gamepad is and gamepad info
+    // var gamepads = navigator.getGamepads();
+    // console.log(gamepads);
+
+    const gamepadDisplay = document.getElementById("gamepad-display");
+
+    //this will be called 60 times per second
+    function update() {
+      //this is so I know which button is being pressed by using 'navigator'
+      const gamepads = navigator.getGamepads();
+      //if the gamepad is available
+      if (gamepads[0]) {
+        //we are extracting that information into the gamepadState variable
+        const gamepadState = {
+          id: gamepads[0].id,
+          //accessing the 'axes' for the joystick to see if they are in use
+          axes: [
+            gamepads[0].axes[0].toFixed(4),
+            gamepads[0].axes[1].toFixed(4),
+            gamepads[0].axes[2].toFixed(4),
+            gamepads[0].axes[3].toFixed(4),
+          ],
+          //accessing the 'button' for the buttons to see if pressed
+          buttons: [
+            { button_0: gamepads[0].buttons[0].pressed },
+            { button_1: gamepads[0].buttons[1].pressed },
+            { button_2: gamepads[0].buttons[2].pressed },
+            { button_3: gamepads[0].buttons[3].pressed },
+            { button_4: gamepads[0].buttons[4].pressed },
+            { button_5: gamepads[0].buttons[5].pressed },
+            { button_6: gamepads[0].buttons[6].pressed },
+            { button_7: gamepads[0].buttons[7].pressed },
+            { button_8: gamepads[0].buttons[8].pressed },
+            { button_9: gamepads[0].buttons[9].pressed },
+            { button_10: gamepads[0].buttons[10].pressed },
+            { button_11: gamepads[0].buttons[11].pressed },
+            { button_12: gamepads[0].buttons[12].pressed },
+            { button_13: gamepads[0].buttons[13].pressed },
+            { button_14: gamepads[0].buttons[14].pressed },
+            { button_15: gamepads[0].buttons[15].pressed },
+          ],
+        };
+        //every frame the gamepad status is being printed to the console
+        // console.log(
+        //   (gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2))
+        // );
+        //displaying the text to a JSON string to display to the user
+        gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
+      }
+      window.requestAnimationFrame(update);
+    }
+
+    window.requestAnimationFrame(update);
+  </script>
+</html>
