@@ -9,20 +9,33 @@
         color: #5f5;
         padding: 30px;
       }
+      img {
+        height: 500px;
+        width: 500px;
+      }
     </style>
   </head>
   <body>
     <h1>Proof of Concept</h1>
     <p id="gamepad-status"></p>
+    <h2>Instructions</h2>
+    <p>
+      To start using this concept first connect your gamepad, button presses on
+      the gamepad will generate sound and you can change the pitch of the sound
+      by changing the Y axis of the left thumbstick
+    </p>
     <pre id="gamepad-display"></pre>
+    <img src="../assets/xbox-controller-img.svg" alt="Gamepad SVG" />
   </body>
   <script>
+    //listening to the event of gamepad connected
     window.addEventListener("gamepadconnected", (event) => {
       console.log("Gamepad connected: ");
       console.log(event.gamepad);
       document.getElementById("gamepad-status").innerHTML =
         "Your gamepad is connected";
     });
+    //listening to the event of gamepad disconnected
     window.addEventListener("gamepaddisconnected", (event) => {
       console.log("Gamepad disconnected: ");
       console.log(event.gamepad);
@@ -30,19 +43,192 @@
         "The gamepad is disconnected";
     });
 
-    // var gamepadStatus = document.getElementById("gamepad-status")
+    const notes = {
+      freqA: 261.63,
+      freqB: 277.18,
+      freqC: 293.66,
+      freqD: 311.13,
+      freqE: 329.63,
+      freqF: 349.23,
+      freqG: 369.99,
+      freqH: 392,
+      freqI: 415.3,
+      freqJ: 440,
+      freqK: 466.16,
+      freqL: 493.88,
+      freqM: 501.18,
+      freqN: 523.25,
+      freqO: 546.56,
+      freqP: 564.18,
+    };
 
-    // if (gamepad.connected) {
-    //   document.getElementById("gamepad-status").innerHTML =
-    //     "The gamepad is connected";
-    // }
-    // if (!gamepad.connected) {
-    //   document.getElementById("gamepad-status").innerHTML =
-    //     "The gamepad is disconnected";
-    // }
-    //this tells me in the console what the gamepad is and gamepad info
-    // var gamepads = navigator.getGamepads();
-    // console.log(gamepads);
+    function gamepadInfo(g) {
+      var string =
+        "Gamepad: " +
+        g.id +
+        "\n\n" +
+        //The thumbstick
+        "Left Thumbstick X: " +
+        g.axes[0].toFixed(4) +
+        "\n" +
+        "Left Thumbstick Y: " +
+        g.axes[1].toFixed(4) +
+        "\n\n" +
+        "Right Thumbstick X: " +
+        g.axes[2].toFixed(4) +
+        "\n" +
+        "Right Thumbstick Y: " +
+        g.axes[3].toFixed(4) +
+        "\n\n" +
+        //The face buttons
+        "A button: " +
+        g.buttons[0].pressed +
+        "\n" +
+        "B button: " +
+        g.buttons[1].pressed +
+        "\n" +
+        "X button: " +
+        g.buttons[2].pressed +
+        "\n" +
+        "Y button: " +
+        g.buttons[3].pressed +
+        "\n\n" +
+        // Bumpers and Triggers
+        "LB: " +
+        g.buttons[4].pressed +
+        "\n" +
+        "RB: " +
+        g.buttons[5].pressed +
+        "\n\n" +
+        "LT: " +
+        g.buttons[6].pressed +
+        "\n" +
+        "RT: " +
+        g.buttons[7].pressed +
+        "\n\n" +
+        //Menu buttons
+        "Back Button: " +
+        g.buttons[8].pressed +
+        "\n" +
+        "Select Button: " +
+        g.buttons[9].pressed +
+        "\n\n" +
+        //Thumbstick buttons
+        "Left Thumbstick Click: " +
+        g.buttons[10].pressed +
+        "\n" +
+        "Right Thumbstick Click: " +
+        g.buttons[11].pressed +
+        "\n\n" +
+        //D-pad buttons
+        "D-pad Up: " +
+        g.buttons[12].pressed +
+        "\n" +
+        "D-pad Down: " +
+        g.buttons[13].pressed +
+        "\n" +
+        "D-pad Left: " +
+        g.buttons[14].pressed +
+        "\n" +
+        "D-pad Right: " +
+        g.buttons[15].pressed +
+        "\n";
+      return string;
+    }
+
+    var audioCtx;
+
+    //create oscillator node
+    var oscillator;
+
+    //declaring the variables to be used for frequency changes
+    var freqCurrent = 0;
+    var freqLastCurrent = 0;
+
+    function freqChecker(g) {
+      //frequency value
+      freqCurrent = 0;
+
+      //checking if any button is pressed, and storing the relative frequency
+      if (g.buttons[0].pressed) {
+        freqCurrent = notes.freqA + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[1].pressed) {
+        freqCurrent = notes.freqB + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[2].pressed) {
+        freqCurrent = notes.freqC + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[3].pressed) {
+        freqCurrent = notes.freqD + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[4].pressed) {
+        freqCurrent = notes.freqE + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[5].pressed) {
+        freqCurrent = notes.freqF + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[6].pressed) {
+        freqCurrent = notes.freqG + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[7].pressed) {
+        freqCurrent = notes.freqH + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[8].pressed) {
+        freqCurrent = notes.freqI + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[9].pressed) {
+        freqCurrent = notes.freqJ + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[10].pressed) {
+        freqCurrent = notes.freqK + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[11].pressed) {
+        freqCurrent = notes.freqL + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[12].pressed) {
+        freqCurrent = notes.freqM + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[13].pressed) {
+        freqCurrent = notes.freqN + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[14].pressed) {
+        freqCurrent = notes.freqO + 20 * g.axes[1].toFixed(4);
+      }
+      if (g.buttons[15].pressed) {
+        freqCurrent = notes.freqP + 20 * g.axes[1].toFixed(4);
+      }
+
+      //checking if there is a change between the last and current frequency
+      if (freqCurrent != freqLastCurrent) {
+        /*checking if freqLastCurrent doesn't equal 0 that means it has been changed previously therefore 
+        an osciallator has started/is playing and needs to be stopped before creating a new one
+        */
+        if (freqLastCurrent != 0) {
+          oscillator.stop();
+        }
+
+        //storing the current frequency to be used next update
+        freqLastCurrent = freqCurrent;
+        //creation of the new audioContext and oscillator to play the new sound
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        //create a new oscillator for new a tone (as we cannot restart/resume oscillators)
+        oscillator = audioCtx.createOscillator();
+
+        //setting the tone for the oscillator
+        oscillator.type = "triangle";
+        oscillator.frequency.setValueAtTime(freqCurrent, audioCtx.currentTime);
+        //connecting to the audioContext and starting the tone
+        oscillator.connect(audioCtx.destination);
+        oscillator.start();
+      }
+    }
+
+    /*
+    this tells me in the console what the gamepad is and gamepad info
+    var gamepads = navigator.getGamepads();
+    console.log(gamepads);
+    */
 
     const gamepadDisplay = document.getElementById("gamepad-display");
 
@@ -82,12 +268,20 @@
             { button_15: gamepads[0].buttons[15].pressed },
           ],
         };
-        //every frame the gamepad status is being printed to the console
-        // console.log(
-        //   (gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2))
-        // );
+
+        /*
+        every frame the gamepad status is being printed to the console
+        console.log(
+          (gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2))
+        );
+        */
+
         //displaying the text to a JSON string to display to the user
-        gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
+        //gamepadDisplay.textContent = JSON.stringify(gamepadState, null, 2);
+        gamepadDisplay.textContent = gamepadInfo(gamepads[0]);
+
+        //passing in the first gamepad into the freqChecker function
+        freqChecker(gamepads[0]);
       }
       window.requestAnimationFrame(update);
     }
