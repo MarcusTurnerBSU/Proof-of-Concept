@@ -1,4 +1,9 @@
-img {
-    height: 300px;
-    width: 300px;
-}
+pre {
+    background: #555;
+    color: #5f5;
+    padding: 30px;
+  }
+  img {
+    height: 500px;
+    width: 500px;
+  }
